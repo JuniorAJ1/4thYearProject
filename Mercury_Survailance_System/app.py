@@ -7,17 +7,17 @@ import numpy as np
 app=Flask(__name__)
 camera = cv2.VideoCapture(0)
 # Load a sample picture and learn how to recognize it.
-krish_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Juniorr.jpg")
-krish_face_encoding = face_recognition.face_encodings(krish_image)[0]
+junior_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Juniorr.jpg")
+junior_face_encoding = face_recognition.face_encodings(junior_image)[0]
 
 # Load a second sample picture and learn how to recognize it.
-bradley_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Tony.jpg")
-bradley_face_encoding = face_recognition.face_encodings(bradley_image)[0]
+robert_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Tony.jpg")
+robert_face_encoding = face_recognition.face_encodings(robert_image)[0]
 
 # Create arrays of known face encodings and their names
 known_face_encodings = [
-    krish_face_encoding,
-    bradley_face_encoding
+    junior_face_encoding,
+    junoir_face_encoding
 ]
 known_face_names = [
     "Junior",
