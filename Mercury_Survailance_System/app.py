@@ -1,23 +1,30 @@
-
-
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response,url_for
 import cv2
 import face_recognition
+from forms import RegistrationForm, SigninForm
 import numpy as np
 app=Flask(__name__)
+app.config['SECRET_KEY']= '8ee2dbaad60f93b61022e297b9f840e5' #secret key which is used for protectection againt modifying cookies, and forgery attacks
+
+posts = [
+    {
+        'Home owner': 'Junior Ajala',
+        'title': 'Mercury survailance system',
+        'content': 'video Stream'
+        }]
 camera = cv2.VideoCapture(0)
 # Load a sample picture and learn how to recognize it.
 junior_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Juniorr.jpg")
 junior_face_encoding = face_recognition.face_encodings(junior_image)[0]
 
 # Load a second sample picture and learn how to recognize it.
-robert_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Tony.jpg")
-robert_face_encoding = face_recognition.face_encodings(robert_image)[0]
+ironMan_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Tony.jpg")
+ironMan_face_encoding = face_recognition.face_encodings(ironMan_image)[0]
 
 # Create arrays of known face encodings and their names
 known_face_encodings = [
     junior_face_encoding,
-    junoir_face_encoding
+    ironMan_face_encoding
 ]
 known_face_names = [
     "Junior",
@@ -82,7 +89,22 @@ def gen_frames():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',posts=posts)
+
+@app.route('/about')
+def about():
+    return render_template('about.html',title='Mercury survailance - information')
+
+@app.route('/register')
+def register():
+    form = RegistrationForm()
+    return render_template('registerpage.html', title= 'Signup',form=form)
+
+@app.route('/SignIn')
+def Signin():
+    form = SigninForm()
+    return render_template('SignInpage.html', title= 'SignIn',form=form)
+
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
