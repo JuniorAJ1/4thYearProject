@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response,url_for
+from flask import Flask, render_template, Response,url_for,flash,redirect
 import cv2
 import face_recognition
 from forms import RegistrationForm, SigninForm
@@ -88,22 +88,30 @@ def gen_frames():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 @app.route('/')
+@app.route('/home')
 def index():
     return render_template('index.html',posts=posts)
 
 @app.route('/about')
 def about():
-    return render_template('about.html',title='Mercury survailance - information')
+    return render_template('about.html',title='information')
 
-@app.route('/register')
+@app.route('/register',methods=['GET','POST'])
 def register():
     form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!','success')
+        return redirect(url_for('Live_stream'))
     return render_template('registerpage.html', title= 'Signup',form=form)
 
 @app.route('/SignIn')
 def Signin():
     form = SigninForm()
     return render_template('SignInpage.html', title= 'SignIn',form=form)
+
+@app.route('/Live_Stream')
+def Live_stream():
+    return render_template('LiveStream.html',title='Live_Stream')
 
 @app.route('/video_feed')
 def video_feed():
