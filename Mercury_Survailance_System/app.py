@@ -1,17 +1,44 @@
 from flask import Flask, render_template, Response,url_for,flash,redirect
-import cv2
+import cv2 #
 import face_recognition
+from flask_sqlalchemy import SQLAlchemy #used for the database
 from forms import RegistrationForm, SigninForm
 import numpy as np
+from datetime import datetime
+
 app=Flask(__name__)
 app.config['SECRET_KEY']= '8ee2dbaad60f93b61022e297b9f840e5' #secret key which is used for protectection againt modifying cookies, and forgery attacks
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20),unique=True,nullable=False)
+    email = db.Column(db.String(100),unique=True,nullable=False)
+    image_file = db.Column(db.String(21),nullable=False, default='default.jpg')
+    password = db.Column(db.String(60),nullable=False)
+    
+    def __repr__(self): # how are object is printed
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+    
+class Info(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100),nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    def __repr__(self): # how are object is printed
+        return f"Post('{self.title}', '{self.date_posted}')"
+    
+    
 posts = [
     {
         'Home owner': 'Junior Ajala',
         'title': 'Mercury survailance system',
         'content': 'video Stream'
         }]
+
+
 camera = cv2.VideoCapture(0)
 # Load a sample picture and learn how to recognize it.
 junior_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Juniorr.jpg")
@@ -104,9 +131,15 @@ def register():
         return redirect(url_for('Live_stream'))
     return render_template('registerpage.html', title= 'Signup',form=form)
 
-@app.route('/SignIn')
+@app.route('/SignIn', methods=['GET','POST'])
 def Signin():
     form = SigninForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@icloud.com' and form.password.data == 'password':
+            flash('You have been logged in', 'success')
+            return redirect(url_for('Live_stream'))
+        else:
+            flash('Login Unsuccessful. ', 'danger')
     return render_template('SignInpage.html', title= 'SignIn',form=form)
 
 @app.route('/Live_Stream')
@@ -117,4 +150,4 @@ def Live_stream():
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 if __name__=='__main__':
-    app.run(debug=True,threaded=True,use_reloader=False,)
+    app.run(host='0.0.0.0',debug=True,threaded=True,use_reloader=False,)
