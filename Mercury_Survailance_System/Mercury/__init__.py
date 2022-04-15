@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_login import LoginManager, UserMixin, login_user
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy #used for the database
 from flask_bcrypt import Bcrypt
 from datetime import datetime

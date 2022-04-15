@@ -19,8 +19,7 @@ posts = [
 # ---------------------------------------------------------------------------------------------------------------------
 #
 # Face recognition code
-
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(10000)
 # Load a sample picture and learn how to recognize it.
 junior_image = face_recognition.load_image_file("/home/pi/Mercury_Survailance_System/profiles/Juniorr.jpg")
 junior_face_encoding = face_recognition.face_encodings(junior_image)[0]
@@ -43,6 +42,8 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+
+camera = cv2.VideoCapture(-1)
 # ---------------------------------------------------------------------------------------------------------------------
 
 
@@ -116,7 +117,7 @@ def register():
         user = User(username=form.username.data, email=form.email.data,password=hash_p) #add users info and passwords to database
         db.session.add(user)
         db.session.commit()
-        flash(f'Account created for {form.username.data} you can now log in','success')
+        flash('Account created for {form.username.data} you can now log in','success')
         return redirect(url_for('Signin'))
     return render_template('registerpage.html', title= 'Signup',form=form)
 
@@ -124,7 +125,7 @@ def register():
 def Signin():
     form = SigninForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email-form.email.data).first #checks database for the email entered
+        user = User.query.filter_by(email=form.email.data).first() #checks database for the email entered
         if user and bcrypt.check_password_hash(user.password,form.password.data):
             login_user(user,remember=form.remember.data)
             return redirect(url_for('Live_stream'))
