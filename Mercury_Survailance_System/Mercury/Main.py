@@ -1,6 +1,6 @@
 from flask import render_template, Response,url_for,flash,redirect
 from Mercury import app, db, bcrypt
-from flask_login import LoginManager, UserMixin, login_user,login_required
+from flask_login import login_user,login_required, current_user, logout_user
 import cv2 #
 import face_recognition
 from Mercury.forms import RegistrationForm, SigninForm
@@ -111,6 +111,8 @@ def about():
 
 @app.route('/register',methods=['GET','POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('Live_stream'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hash_p = bcrypt.generate_password_hash(form.password.data).decode('utf-8') # this hashes the password so it can be secured from any db hacks
@@ -123,6 +125,8 @@ def register():
 
 @app.route('/SignIn', methods=['GET','POST'])
 def Signin():
+    if current_user.is_authenticated:
+        return redirect(url_for('Live_stream'))
     form = SigninForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first() #checks database for the email entered
@@ -140,3 +144,8 @@ def Live_stream():
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/SignOut')
+def Signout():
+    logout_user()
+    return redirect(url_for('index'))
+    
