@@ -17,11 +17,3 @@ class User(db.Model,UserMixin): #usermixin adds all the required methods needed 
     def __repr__(self): # how are object is printed
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
     
-class Info(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100),nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    
-    def __repr__(self): # how are object is printed
-        return f"Post('{self.title}', '{self.date_posted}')"
-    
