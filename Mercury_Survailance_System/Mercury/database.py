@@ -16,4 +16,3 @@ class User(db.Model,UserMixin): #usermixin adds all the required methods needed 
     
     def __repr__(self): # how are object is printed
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
-    
