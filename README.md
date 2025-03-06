@@ -1,2 +1,2 @@
-# 4thYearProject
-code for final year project using raspberry pi
+# Face recognition surveillance system
+using raspberry pi
